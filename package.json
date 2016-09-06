@@ -1,6 +1,6 @@
 {
     "name":                 "verbatim",
-    "version":              "9.9.9",
+    "version":              "0.0.0",
     "description":
 
       "Record and replay error first callbacks in a deterministic order.",
