@@ -1,13 +1,91 @@
-var adhere = require('adhere')
-
-exports.record = function (method) {
-    return adhere(method, function (object, vargs) {
-        object._verbatim.invoke(true, object, method, vargs, vargs.pop())
-    })
+exports.serialize = function (object) {
+    const seen = new Map, references = []
+    function serialize (path, value, buffers) {
+        switch (typeof value) {
+        case 'object':
+            if (seen.has(value)) {
+                return [ '_reference', path, seen.get(value) ]
+            }
+            if (object === null) {
+                return null
+            } else if (Array.isArray(value)) {
+                seen.set(value, path)
+                const array = [ '_array' ]
+                for (let i = 0, I = value.length; i < I; i++) {
+                    array.push(serialize(path.concat(i), value[i], buffers))
+                }
+                return array
+            } else if (value instanceof Date) {
+                return [ '_date', value.getTime() ]
+            } else if (Buffer.isBuffer(value)) {
+                seen.set(value, path)
+                const index = buffers.length
+                buffers.push(value)
+                return [ '_buffer', index ]
+            } else {
+                seen.set(value, path)
+                const object = {}
+                for (const name in value) {
+                    object[name] = serialize(path.concat(name), value[name], buffers)
+                }
+                return object
+            }
+        case 'function':
+            throw new Error
+        case 'undefined':
+            return [ '_undefined' ]
+        default:
+            return value
+        }
+    }
+    const buffers = []
+    return [ Buffer.from(JSON.stringify(serialize([], object, buffers))) ].concat(buffers)
 }
 
-exports.rerun = function (method) {
-    return adhere(method, function (object, vargs) {
-        object._verbatim.invoke(false, object, method, vargs, vargs.pop())
-    })
+exports.deserialize = function (buffers) {
+    const references = []
+    function deserialize (value) {
+        if (Array.isArray(value)) {
+            switch (value[0]) {
+            case '_array':
+                value.shift()
+                for (let i = 0, I = value.length; i < I; i++) {
+                    value[i] = deserialize(value[i])
+                }
+                return value
+            case '_date':
+                return new Date(value[1])
+            case '_reference':
+                value.shift()
+                references.push(value)
+                return null
+            case '_buffer':
+                return buffers[value[1]]
+            case '_undefined':
+                return function () {} ()
+            }
+        }
+        if (value == null) {
+            return null
+        }
+        if (typeof value == 'object') {
+            for (const name in value) {
+                value[name] = deserialize(value[name])
+            }
+        }
+        return value
+    }
+    const object = deserialize(JSON.parse(buffers.shift().toString()))
+    for (const [ to, from ] of references) {
+        let value = object, i = 0
+        for (const part of from) {
+            value = value[part]
+        }
+        let collection = object
+        for (let I = to.length - 1; i < I; i++) {
+            collection = collection[to[i]]
+        }
+        collection[to[i]] = value
+    }
+    return object
 }

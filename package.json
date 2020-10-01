@@ -21,16 +21,14 @@
     },
     "dependencies":
     {
-                            "adhere":                       "1.0.x",
-                            "cadence":                      "1.0.x"
     },
     "devDependencies":
     {
-                            "proof":                        "1.1.x"
+                            "proof":                        "^9.0.2"
     },
     "main":                 "verbatim",
     "scripts":
     {
-                            "test": "proof platform win32 && proof test */*.t.js || t/test"
+                            "test": "proof test/*.t.js"
     }
 }
