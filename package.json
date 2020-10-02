@@ -3,12 +3,11 @@
     "version":              "0.0.1",
     "description":
 
-      "Record and replay error first callbacks in a deterministic order.",
+      "JavaScript serialization of typed objects with cyclical references.",
 
     "keywords":
     [
-                            "queue", "events", "callback", "control", "flow",
-                            "cadence", "determinism", "debugging", "debug"
+                            "serialization", "javascript", "cyclical", "binary"
     ],
     "author":               "Alan Gutierrez <alan@prettyrobots.com>",
     "homepage":             "https://github.com/bigeasy/verbatim",
