@@ -1,4 +1,4 @@
-require('proof')(17, okay => {
+require('proof')(18, okay => {
     const Verbatim = require('..')
 
     function cycle (value) {
@@ -37,4 +37,6 @@ require('proof')(17, okay => {
     const buffer = Verbatim.deserialize(buffered)
     okay(Buffer.isBuffer(buffer), 'is buffer')
     okay(buffer.toString(), 'a', 'buffer')
+
+    okay(cycle({ a: null, b: null }), { a: null, b: null }, 'null should no created references')
 })

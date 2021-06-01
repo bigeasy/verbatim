@@ -6,7 +6,7 @@ exports.serialize = function (object) {
             if (seen.has(value)) {
                 return [ '_reference', path, seen.get(value) ]
             }
-            if (object === null) {
+            if (value === null) {
                 return null
             } else if (Array.isArray(value)) {
                 seen.set(value, path)
