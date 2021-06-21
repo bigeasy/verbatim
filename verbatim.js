@@ -34,6 +34,15 @@ exports.serialize = function (object) {
             throw new Error
         case 'undefined':
             return [ '_undefined' ]
+        case 'number':
+            switch (value) {
+            case Infinity:
+                return [ '_infinity', 1 ]
+            case -Infinity:
+                return [ '_infinity', -1 ]
+            default:
+                return value
+            }
         default:
             return value
         }
@@ -55,6 +64,8 @@ exports.deserialize = function (buffers) {
                 return value
             case '_date':
                 return new Date(value[1])
+            case '_infinity':
+                return Infinity * value[1]
             case '_reference':
                 value.shift()
                 references.push(value)
