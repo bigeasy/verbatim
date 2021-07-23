@@ -1,6 +1,6 @@
 {
     "name":                 "verbatim",
-    "version":              "0.1.4",
+    "version":              "0.1.5",
     "description":
 
       "JavaScript serialization of typed objects with cyclical references.",
