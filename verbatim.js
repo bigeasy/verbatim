@@ -43,6 +43,8 @@ exports.serialize = function (object) {
             default:
                 return value
             }
+        case 'bigint':
+            return [ '_bigint', String(value) ]
         default:
             return value
         }
@@ -74,6 +76,8 @@ exports.deserialize = function (buffers) {
                 return buffers[value[1]]
             case '_undefined':
                 return function () {} ()
+            case '_bigint':
+                return BigInt(value[1])
             }
         }
         if (value == null) {

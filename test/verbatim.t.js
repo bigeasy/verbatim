@@ -1,4 +1,4 @@
-require('proof')(20, okay => {
+require('proof')(21, okay => {
     const Verbatim = require('..')
 
     function cycle (value) {
@@ -6,6 +6,7 @@ require('proof')(20, okay => {
     }
 
     okay(cycle(1), 1, 'number')
+    okay(cycle(1n), 1n, 'bigint')
     okay(cycle(Infinity), Infinity, 'infinity')
     okay(cycle(-Infinity), -Infinity, 'negative infinity')
     okay(cycle(true), true, 'true')
