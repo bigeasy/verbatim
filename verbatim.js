@@ -15,6 +15,8 @@ exports.serialize = function (object) {
                     array.push(serialize(path.concat(i), value[i], buffers))
                 }
                 return array
+            } else if (value instanceof BigInt) {
+                return [ '_bigint_object', String(value.valueOf()) ]
             } else if (value instanceof Date) {
                 return [ '_date', value.getTime() ]
             } else if (Buffer.isBuffer(value)) {
@@ -78,6 +80,8 @@ exports.deserialize = function (buffers) {
                 return function () {} ()
             case '_bigint':
                 return BigInt(value[1])
+            case '_bigint_object':
+                return Object(BigInt(value[1]))
             }
         }
         if (value == null) {

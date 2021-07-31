@@ -1,4 +1,4 @@
-require('proof')(21, okay => {
+require('proof')(22, okay => {
     const Verbatim = require('..')
 
     function cycle (value) {
@@ -42,4 +42,11 @@ require('proof')(21, okay => {
     okay(buffer.toString(), 'a', 'buffer')
 
     okay(cycle({ a: null, b: null }), { a: null, b: null }, 'null should no created references')
+
+    // This is getting dubious. I'm not sure I want to support this sort of
+    // thing since it is nothing I'd ever want in my own software. I'm adding it
+    // for support of IndexedDB, but if that's the way it's going to be,
+    // preserving nonsense values like BigInt as Object, then I'll probably
+    // create a copy of Verbatim that is specific to IndexedDB.
+    okay(cycle(Object(1n)).valueOf(), 1n, 'bigint object')
 })
